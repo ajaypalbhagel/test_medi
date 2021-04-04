@@ -1,4 +1,4 @@
- const bcrypt = require('bcrypt');
+//  const bcrypt = require('bcrypt');
 const express = require('express');
 const User = require('../model/userModel')
 const mongoose = require('mongoose');
@@ -16,8 +16,8 @@ async function userRegistration(request) {
     var responseData = ''
     let errorMsg = ''
     // converting hash format password
-     let hash = await bcrypt.hash(request.password, 10)
-    // let hash = 123
+    //  let hash = await bcrypt.hash(request.password, 10)
+    let hash = request.password
     // checking email already exits or not
     const query = { email: request.email };
     const options = {}
