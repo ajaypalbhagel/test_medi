@@ -1,4 +1,4 @@
-//  const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt');
 const express = require('express');
 const User = require('../model/userModel')
 const mongoose = require('mongoose');
@@ -16,13 +16,11 @@ async function userRegistration(request) {
     var responseData = ''
     let errorMsg = ''
     // converting hash format password
-    //  let hash = await bcrypt.hash(request.password, 10)
-    let hash = request.password
+    let hash = await bcrypt.hash(String(request.password), 10)
     // checking email already exits or not
     const query = { email: request.email };
     const options = {}
     const userData = await User.find(query, options);
-    console.log(userData)
     if (userData.length >= 1) {
         error = true;
         errorMsg = 'email already registered'
@@ -61,55 +59,40 @@ async function userLogin(request) {
     const clientId = request.client_id
 
     // feching user data corresponding to user email
-    await User.find({ email: request.email })
-        .exec()
-        .then(async user => {
-            if (user.length < 1) {
-                error = true
-                errorMsg = 'username password incorrect'
-            } else {
-                // compare user password
-                let result = await bcrypt.compare(request.password, user[0].password)
-                if (!result) {
-                    error = true
-                    errorMsg = 'username password incorrect'
-                }
-                else {
-                    const token = jwt.sign({
-                        email: user[0].email,
-                        userId: user[0]._id,
-                    },
-                        tokenSecretKey,
-                        tokenExpireTime
-
-                    )
-                    var refreshToken = randtoken.uid(256)
-                    const UserLoginSession = new userLoginSession({
-                        _id: new mongoose.Types.ObjectId(),
-                        user_id: user[0]._id,
-                        client_id: clientId,
-                        server_unique_id: serverUniqueId,
-                        refresh_token: refreshToken
-                    })
-                    // inserting user login session data in db
-                    await UserLoginSession.save().then(async result => { })
-                    responseData = {
-                        message: 'Auth Succesfull',
-                        token: token,
-                        refresh_token: refreshToken,
-                        user_id: user[0]._id,
-                        email: user[0].email,
-                        name: user[0].name,
-                        client_id: clientId,
-                        server_unique_id: serverUniqueId
-                    }
-                }
-            }
-        })
+    const query = { email: request.email };
+    const options = {}
+    const user = await User.find(query, options);
+    if (user.length < 1) {
+        error = true
+        errorMsg = 'username password incorrect'
+    } else {
+        // compare user password
+        let result = await bcrypt.compare(String(request.password), user[0].password)
+        if (!result) {
+            error = true
+            errorMsg = 'username password incorrect'
+        } else {
+            const token = jwt.sign({
+                email: user[0].email,
+                userId: user[0]._id,
+            },
+                tokenSecretKey,
+                tokenExpireTime
+            )
+            var refreshToken = randtoken.uid(256)
+            responseData = {
+                message: 'Auth Succesfull',
+                token: token,
+                user_id: user[0]._id,
+                email: user[0].email,
+                name: user[0].name
+             }
+        }
+    }
     return [error, errorMsg, responseData];
 }
 
-async function updateUser(request,userId) {
+async function updateUser(request, userId) {
     let error = false
     var responseData = ''
     let errorMsg = ''
@@ -119,8 +102,8 @@ async function updateUser(request,userId) {
     const options = { upsert: true };
     // create a document that sets the plot of the movie
     const updateDoc = {
-      $set: {
-        gender: request.gender,
+        $set: {
+            gender: request.gender,
             last_name: request.last_name,
             dob: request.dob,
             heightCms: request.heightCms,
@@ -135,8 +118,8 @@ async function updateUser(request,userId) {
         },
     };
     const result = await User.updateOne(filter, updateDoc, options);
-    if(result)
-    responseData = `record updated successfully!`;
+    if (result)
+        responseData = `record updated successfully!`;
     return [error, errorMsg, responseData];
 }
 
@@ -144,18 +127,18 @@ async function getUserResult(request) {
     let error = false
     var responseData = ''
     let errorMsg = ''
-const query = {};
-if(request.user_id){
- query['_id'] = request.user_id;
-}
-if(request.user_name){
-    query['email'] = request.user_name;
-}
-const options = {}
-responseData = await User.find(query, options);
-return [error, errorMsg, responseData];
+    const query = {};
+    if (request.user_id) {
+        query['_id'] = request.user_id;
+    }
+    if (request.user_name) {
+        query['email'] = request.user_name;
+    }
+    const options = {}
+    responseData = await User.find(query, options);
+    return [error, errorMsg, responseData];
 }
 
 
 
-module.exports = { userRegistration, userLogin ,updateUser,getUserResult}
+module.exports = { userRegistration, userLogin, updateUser, getUserResult }

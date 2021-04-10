@@ -9,9 +9,6 @@ const userSchema = mongoose.Schema({
     heightCms: { type: Number },
     weightLbs: { type: Number },
     status: { type: String },
-    category:{type:String},
-    preffered_language:{type:String},
-    addresss:{type:Object},
     role: { type: Array },
     email: {
         type: String,
@@ -19,7 +16,10 @@ const userSchema = mongoose.Schema({
         unique: true
     },
     password: { type: String, required: true },
-    mobile: { type: Number }
+    mobile: { type: Number },
+    addresss:{type:Object},
+    preffered_language:{type:String},
+    Blood_group:{type:String}
 })
 
 module.exports = mongoose.model('User', userSchema)
