@@ -19,7 +19,8 @@ const userSchema = mongoose.Schema({
     mobile: { type: Number },
     addresss:{type:Object},
     preffered_language:{type:String},
-    Blood_group:{type:String}
+    Blood_group:{type:String},
+    isActive:{type:Number, default:0}
 })
 
 module.exports = mongoose.model('User', userSchema)

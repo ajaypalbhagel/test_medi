@@ -65,6 +65,9 @@ async function userLogin(request) {
     if (user.length < 1) {
         error = true
         errorMsg = 'username password incorrect'
+    } else if(user[0].isActive == 0){
+        error = true
+        errorMsg = 'please activate your account . activate link sent on your email.'
     } else {
         // compare user password
         let result = await bcrypt.compare(String(request.password), user[0].password)
