@@ -8,6 +8,8 @@ const userLoginSession = require("../model/userLoginSession");
 const { ObjectID } = require('bson');
 const tokenExpireTime = { expiresIn: "30m" }
 const tokenSecretKey = 'secret!@#$!@!@'
+var nodemailer = require('nodemailer');
+// var sendmail = require('../utils/mailService')
 
 // user signup api service
 
@@ -51,6 +53,7 @@ async function userRegistration(request) {
 
 // user login api service
 async function userLogin(request) {
+    // sendmail()
     let error = false
     var responseData = {}
     let errorMsg = ''
@@ -61,7 +64,7 @@ async function userLogin(request) {
     // feching user data corresponding to user email
     const query = { email: request.email };
     const options = {}
-    const user = await User.find(query, options);
+    const user = await User.find(query, options); 
     if (user.length < 1) {
         error = true
         errorMsg = 'username password incorrect'

@@ -3,6 +3,8 @@ var bodyParser = require('body-parser');
 var cors = require('cors');
 const userRoutes = require('./api/controller/userController')
 const entityRoutes = require('./api/controller/entityController')
+const medicationRoutes = require('./api/controller/medicationController')
+const appointmentRoutes = require('./api/controller/appointmentController')
 var app = express();
 var fs = require('fs');
 
@@ -45,6 +47,8 @@ app.use((req,res,next)=>
 app.use(cors());
 app.use('/user',userRoutes)
 app.use('/entity',entityRoutes)
+app.use('/medication',medicationRoutes)
+app.use('/appointment',appointmentRoutes)
 
 app.get('/home',(req,res)=>{
     var htmlText = fs.readFileSync('./home.html', 'utf8');
