@@ -44,4 +44,33 @@ router.post('/query', async(req, res, next)  => {
     }
 });
 
+// create Medication controller
+router.post('/:appointment_Id/booking', async(req, res, next)  => {
+    const [error,errorMsg, result] = await appointmentService.createBooking(req.body,req.params.appointment_id);
+    if (error) {
+        return res.status(500).json({
+            message: errorMsg
+        })
+    } else {
+        res.status(200).json({
+            response: result
+        })
+    }
+});
+
+// query Medication controller
+router.post('/:appointment_Id/query', async(req, res, next)  => {
+    const [error,errorMsg, result] = await appointmentService.getBookingResult(req.body,req.params.appointment_Id);
+    if (error) {
+        return res.status(500).json({
+            message: errorMsg
+        })
+    } else {
+        res.status(200).json({
+            response: result
+        })
+    }
+});
+
+
 module.exports = router
